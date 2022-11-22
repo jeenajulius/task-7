@@ -1,0 +1,244 @@
+
+#Social_Networks_Ads.csv
+
+Importing the libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+ 
+Importing the dataset
+
+DF=pd.read_csv("Social_Network_Ads.csv")
+DF.head(30)
+
+     User ID	Gender	Age	EstimatedSalary	Purchased
+0	  15624510	Male	  19	    19000	         0
+1	  15810944	Male	  35	    20000	         0  
+2	  15668575	Female	26	    43000	         0
+3	  15603246	Female	27	    57000	         0
+4	  15804002	Male	  19	    76000	         0
+5	  15728773	Male	  27	    58000	         0
+6	  15598044	Female	27	    84000	         0    
+7	  15694829	Female	32	   150000	         1
+8  	15600575	Male	  25	    33000	         0
+9	  15727311	Female	35	    65000	         0
+10	15570769	Female	26	    80000	         0
+11	15606274	Female	26	    52000	         0
+12	15746139	Male	  20	    86000	         0
+13	15704987	Male	  32	    18000	         0
+14	15628972	Male	  18	    82000	         0
+15	15697686	Male	  29	    80000	         0
+16	15733883	Male	  47	    25000	         1
+17	15617482	Male	  45	    26000	         1
+18	15704583	Male	  46	    28000	         1
+19	15621083	Female	48	    29000	         1
+20	15649487	Male	  45	    22000	         1
+21	15736760	Female	47	    49000	         1
+22	15714658	Male	  48	    41000	         1
+23	15599081	Female	45	    22000	         1
+24	15705113	Male	  46	    23000	         1
+25	15631159	Male	  47	    20000	         1
+26	15792818	Male	  49	    28000	         1
+27	15633531	Female	47	    30000	         1
+28	15744529	Male	  29	    43000	         0
+29	15669656	Male	  31	    18000	         0
+
+DF.Gender.replace("Female",0,inplace=True)
+DF.Gender.replace("Male",1,inplace=True)
+
+X=DF.drop(["Purchased"],axis=1)
+Y=DF["Purchased"]
+Y=np.array(Y).reshape(-1,1)
+Y.shape
+(400, 1)
+
+Splitting the dataset into the Training set and Test set
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test =train_test_split(X,Y,test_size=0.3,random_state=27)
+x_train.head(30)
+     User ID	 Gender	 Age	EstimatedSalary
+27	15633531 	   0	   47	     30000
+97	15582492	   1	   28	    123000
+76	15746737	   1	   18	     52000
+221	15663161	   1	   35	     91000
+10	15570769	   0 	   26	     80000
+246	15638003	   0	   35	     50000
+122	15724423	   0	   40	     75000
+347	15768151	   0	   54	    108000
+330	15693264	   1	   38	     51000
+22	15714658	   1	   48	     41000
+49	15793813	   0	   31	     89000
+210	15724536	   0	   48	     96000
+71	15726358	   0	   24	     27000
+136	15668504	   0	   20	     82000
+98	15575694	   1	   35	     73000
+61	15673619	   1	   25	     87000
+48	15727696	   1	   30	    135000
+398	15755018	   1	   36	     33000
+236	15660541	   1	   40	     57000
+256	15609637	   0	   41	     72000
+74	15592877	   1	   32	     18000
+267	15581282	   1	   37	     74000
+299	15747043	   1	   46	    117000
+145	15746422	   0	   24	     89000
+126	15610801	   1	   42	     65000
+334	15814553	   1	   57	     60000
+216	15636023	   1	   49	     65000
+393	15635893	   1	   60	     42000
+317	15684861	   1	   35	     55000
+90	15684801	   1	   22	     81000
+
+Feature Scaling
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(x_train)
+
+StandardScaler()
+
+Fitting K-NN to the Training set
+
+from sklearn.neighbors import KNeighborsRegressor
+model=KNeighborsRegressor(n_neighbors=1)
+model.fit(x_train,y_train)
+
+KNeighborsRegressor(n_neighbors=1)
+Predicting the Test set results
+
+test_preds=model.predict(x_test)
+test_preds
+array([[0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [1.],
+       [0.],
+       [1.],
+       [0.],
+       [1.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [0.],
+       [0.],
+       [0.],
+       [0.],
+       [1.],
+       [1.],
+       [1.],
+       [0.],
+       [1.]])
+Making the Confusion Matrix
+
+from sklearn import metrics
+confusion_matrix = metrics.confusion_matrix(y_test,test_preds)
+confusion_matrix 
+array([[66, 13],
+       [18, 23]])
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = [False, True])
+cm_display.plot()
+plt.show()
+
+ 
