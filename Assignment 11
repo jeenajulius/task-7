@@ -1,0 +1,106 @@
+
+#Data.csv
+
+Step 1: Importing the libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+Step 2: Importing dataset
+
+Data=pd.read_csv("Data.csv")
+Data
+  Country 	Age	   Salary	Purchased
+0	France	  44.0	72000.0	  No
+1	Spain	    27.0	48000.0	  Yes
+2	Germany	  30.0	54000.0	  No
+3	Spain	    38.0	61000.0	  No
+4	Germany	  40.0	 NaN	    Yes
+5	France	  35.0  58000.0	  Yes
+6	Spain   	NaN	  52000.0	  No
+7	France	  48.0	79000.0	  Yes
+8	Germany	  50.0	83000.0	  No
+9	France	  37.0	67000.0	  Yes
+
+Step 3: Handling the missing data
+
+#mean of salary = 57,400
+#mean of Age=38.7
+Data.Salary.replace(0,57400,inplace=True)
+Data.Age.replace(np.nan,38.7,inplace=True)
+Data
+  Country 	Age	  Salary	Purchased
+0	France	  44.0	72000.0	  No
+1	Spain	    27.0	48000.0	  Yes
+2	Germany	  30.0	54000.0	  No
+3	Spain	    38.0	61000.0	  No
+4	Germany	  40.0	57400.0	  Yes
+5	France	  35.0	58000.0	  Yes
+6	Spain	    38.7	52000.0	  No
+7	France	  48.0	79000.0	  Yes
+8	Germany	  50.0	83000.0	  No
+9	France	  37.0	67000.0	  Yes
+
+Step 4: Encoding categorical data
+
+#Index_list=Data.loc[Data["Purchased"]=="Yes"].index
+#Data["purchased"]
+Data.Purchased.replace("Yes",1,inplace=True)
+Data.Purchased.replace("No",0,inplace=True)
+Data
+
+  Country	   Age	Salary	Purchased
+0	France	  44.0	72000.0	  0
+1	Spain	    27.0	48000.0	  1
+2	Germany	  30.0	54000.0	  0
+3	Spain	    38.0	61000.0	  0
+4	Germany	  40.0	57400.0	  1
+5	France	  35.0	58000.0	  1
+6	Spain	    38.7	52000.0	  0
+7	France	  48.0	79000.0	  1
+8	Germany	  50.0	83000.0	  0
+9	France	  37.0	67000.0	  1
+
+Step 5: Creating a dummy variable
+
+pd.get_dummies(Data["Purchased"])
+  0	1
+0	1	0
+1	0	1
+2	1	0
+3	1	0
+4	0	1
+5	0	1
+6	1	0
+7	0	1
+8	1	0
+9	0	1
+
+X=Data.drop(["Purchased"],axis=1)
+Y=Data["Purchased"]
+
+Step 6: Splitting the datasets into training sets and Test sets
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test =train_test_split(X,Y,test_size=0.3,random_state=13)
+
+Step 7: Feature Scaling
+
+#making ages within 30-45
+from sklearn.preprocessing import MinMaxScaler
+func=MinMaxScaler(feature_range=(30,45))
+func.fit(np.array(x_train["Age"]).reshape(-1,1))
+
+MinMaxScaler(feature_range=(30, 45))
+tr_x_train=func.transform(np.array(x_train["Age"]).reshape(-1,1))
+tr_x_train
+array([[30.        ],
+       [38.47826087],
+       [43.69565217],
+       [45.        ],
+       [36.52173913],
+       [41.08695652],
+       [31.95652174]])
+ 
