@@ -1,0 +1,117 @@
+
+#Social_Network_Ads
+Import libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+Importing the dataset
+
+df=pd.read_csv("Social_Network_Ads.csv")
+df.head()
+
+  User ID	Gender	Age	EstimatedSalary	Purchased
+0	15624510	1    	19         19000	   0
+1	15810944	1	    35	       20000	   0  
+2	15668575	0	    26	       43000	   0
+3	15603246	0	    27	       57000	   0
+4	15804002	1	    19	       76000	   0
+
+df.Gender.replace("Female",0,inplace=True)
+df.Gender.replace("Male",1,inplace=True)
+df.head()
+
+  User ID	Gender	Age	EstimatedSalary	Purchased
+0	15624510	1	    19	    19000        	0
+1	15810944	1	    35	    20000	        0
+2	15668575	0	    26	    43000	        0
+3	15603246	0	    27	    57000	        0
+4	15804002	1	    19	    76000	        0
+
+Splitting the dataset into the Training set and Test set
+
+X=df.drop(["Purchased"],axis=1)
+Y=df["Purchased"]
+Y=np.array(Y).reshape(-1,1)
+Y.shape
+(400, 1)
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test= train_test_split(X,Y,test_size=0.3,random_state=69)
+
+Feature Scaling
+
+df.describe()
+
+       User ID	      Gender	     Age	  EstimatedSalary	Purchased
+count	4.000000e+02	400.000000	400.000000	400.000000	400.000000
+mean	1.569154e+07	0.490000	   37.655000	69742.500000	0.357500
+std 	7.165832e+04	0.500526	   10.482877	34096.960282	0.479864
+min	  1.556669e+07	0.000000	   18.000000	15000.000000	0.000000
+25%	  1.562676e+07	0.000000	   29.750000	43000.000000	0.000000
+50%	  1.569434e+07	0.000000	   37.000000	70000.000000	0.000000
+75%	  1.575036e+07	1.000000	   46.000000	88000.000000	1.000000
+max	  1.581524e+07	1.000000	   60.000000	150000.000000	1.000000
+
+#Checking for outliers:
+x_train.plot(kind='box',subplots=True,layout=(4,4),fontsize=8,figsize=(12,12));
+
+#No outliers but giving a more desirable range for adults:
+#22-50
+from sklearn.preprocessing import MinMaxScaler
+func=MinMaxScaler(feature_range=(22,50))
+func.fit(x_train)
+tr_xtrain=func.transform(x_train)
+tr_xtest=func.transform(x_test)
+tr_xtrain
+
+array([[38.77800979, 22.        , 39.33333333, 47.91044776],
+       [27.93893308, 22.        , 35.33333333, 42.26865672],
+       [25.29267302, 50.        , 30.        , 35.58208955],
+       ...,
+       [47.14161104, 50.        , 28.        , 37.46268657],
+       [49.33657618, 22.        , 37.33333333, 33.70149254],
+       [31.93750075, 22.        , 28.        , 30.98507463]])
+
+Fitting SVM to the Training set
+
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+model=SVC(random_state=3)
+model.fit(tr_xtrain,y_train)
+accuracy_score(y_test,model.predict(tr_xtest))
+/Users/jeenajulius/opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/validation.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  return f(*args, **kwargs)
+0.8666666666666667
+86% accuracy score
+
+Predicting the Test set results
+
+Making the Confusion Matrix
+
+from sklearn import metrics
+confusion_matrix_train = metrics.confusion_matrix(y_train,model.predict(tr_xtrain))
+confusion_matrix_train
+array([[172,  10],
+       [ 15,  83]])
+confusion_matrix_test= metrics.confusion_matrix(y_test,model.predict(tr_xtest))
+confusion_matrix_test
+array([[68,  7],
+       [ 9, 36]])
+Visualising the Training set results
+
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix_train, display_labels = [False, True])
+cm_display.plot()
+plt.show()
+
+sns.pairplot(x_train)
+
+Visualising the Test set results
+
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix_test, display_labels = [False, True])
+cm_display.plot()
+plt.show()
+
+ 
